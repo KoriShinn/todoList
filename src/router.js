@@ -5,7 +5,7 @@ import TodoList from './components/todoList/TodoList.vue'
 Vue.use(Router)
 
 
-export default new Router({
+const router = new Router({
   routes: [
     { path: '/', redirect: '/login' },
     {
@@ -14,3 +14,13 @@ export default new Router({
     { path: '/todo', component: TodoList },
   ]
 })
+
+router.beforeEach((to, from, next) => {
+  if (to.path === '/login' || to.path === '/reguser') return next()
+  const tokenStr = window.sessionStorage.getItem('token')
+  if (!tokenStr) return next('/login')
+  next()
+})
+
+
+export default router

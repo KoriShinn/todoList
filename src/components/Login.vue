@@ -90,19 +90,14 @@ export default {
           message: "登录成功",
           duration: 1100,
         });
-        console.log(res.data);
+        this.$bus.$emit("getTodoList", res.data);
         window.sessionStorage.setItem("token", res.data.token);
         this.$router.push("/todo");
-        // const { data: res } = await this.$http.post("login", this.loginForm);
-        // if (res.meta.status !== 0)
-        //   return this.$message.error("用户名或密码错误");
-        // this.$message.success("登陆成功");
-        // 1.将登陆成功后返回的token值保存在sessionStorage中
-        // window.sessionStorage.setItem("token", res.data.token);
-        // 2.通过编程式导航跳转到后台主页，路由地址是 '/my/todo'
-        // this.$router.push("/my/todow");
       });
     },
+  },
+  beforeDestroy() {
+    this.$bus.$off("getTodoList");
   },
 };
 </script>

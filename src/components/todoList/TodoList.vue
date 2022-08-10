@@ -28,11 +28,8 @@ export default {
   },
   data() {
     return {
-      todos: [
-        { id: 1, title: "吃饭", done: true },
-        { id: 2, title: "睡觉", done: true },
-        { id: 3, title: "写代码", done: false },
-      ],
+      todos: [],
+      userinfo: {},
     };
   },
   methods: {
@@ -41,18 +38,21 @@ export default {
       this.todos.unshift(newItem);
     },
     // 删
-    removeItem(todoId) {
-      this.todos = this.todos.filter((todo) => {
-        return todo.id !== todoId;
-      });
-    },
+
+    // removeItem(todoId) {
+    //   this.todos = this.todos.filter((todo) => {
+    //     return todo.id !== todoId;
+    //   });
+    // },
     // 改 done
-    doneChange(todoId) {
-      this.todos.forEach((todo) => {
-        if (todo.id === todoId) {
-          todo.done = !todo.done;
-        }
-      });
+    async doneChange(todoId) {
+      // this.todos.forEach((todo) => {
+      //   if (todo.id === todoId) {
+      //     todo.done = !todo.done;
+      //   }
+      // });
+      const { data: res } = await this.$http.put(`todo/list/${todoId}`);
+      console.log(res);
     },
     // 改 编辑title数据
     editChange(todoId, value) {
@@ -83,8 +83,38 @@ export default {
         return todo.done !== true;
       });
     },
+    // ----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+    // 获取列表
+    async getTodoList() {
+      const { data: res } = await this.$http.get("todo", this.userinfo);
+      if (res.meta.status !== 0) return this.$message.error("获取列表失败");
+      this.todos = res.data;
+      console.log(res.data);
+    },
+    // 删除功能
+    async removeItem(todoId) {
+      const { data: res } = await this.$http.delete(`todo/${todoId}`);
+      if (res.meta.status !== 0) return this.$message.error("删除失败");
+      this.$message.success("删除成功");
+      this.getTodoList();
+    },
+    // 删除多个
+
+    // getUserinfo(info) {
+    //   const { nickname, token, ...userinfo } = info;
+    //   this.userinfo = userinfo;
+    //   this.getTodoList();
+    // },
+  },
+  created() {
+    this.getTodoList();
   },
   mounted() {
+    // 弃用
+    this.$bus.$on("getTodoList", this.getUserinfo);
+
+    // -------
     this.$bus.$on("dChange", this.doneChange);
     this.$bus.$on("rItem", this.removeItem);
     this.$bus.$on("aItem", this.addItem);
