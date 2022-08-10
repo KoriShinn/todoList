@@ -1,0 +1,38 @@
+/* 全局样式表 */
+  html,
+  body,
+  #app {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    min-width: 1380px;
+  }
+  .el-breadcrumb {
+    margin-bottom: 15px;
+    font-size: 12px;
+  }
+  .el-card {
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.3) !important;
+  }
+  .el-table {
+    margin-top: 20px;
+    font-size: 12px;
+  }
+  .el-pagination {
+    margin-top: 15px;
+  }
+  .el-cascader-menu {
+    height: 250px;
+  }
+  .el-steps {
+    margin: 20px 0;
+  }
+  .el-step__title {
+    font-size: 13px;
+  }
+  .el-checkbox.is-bordered.is-checked {
+    margin: 0 5px 0 10px;
+  }
+  .ql-editor {
+    min-height: 300px;
+  }
