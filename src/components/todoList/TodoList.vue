@@ -56,11 +56,16 @@ export default {
     },
     // 改 编辑title数据
     editChange(todoId, value) {
-      this.todos.forEach((todo) => {
+      this.todos.forEach(async (todo) => {
         if (todo.id === todoId) {
           todo.isEdit = !todo.isEdit;
           if (value) {
-            todo.title = value;
+            // todo.title = value;
+            const { data: res } = await this.$http.put(`todo/${todoId}`, {
+              title: value,
+            });
+            if (res.meta.status !== 0) return this.$message.error("修改失败");
+            this.getTodoList();
           }
         }
       });

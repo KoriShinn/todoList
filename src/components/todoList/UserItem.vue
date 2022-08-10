@@ -25,7 +25,9 @@
       >
         编辑
       </button>
-      <div v-show="todo.isEdit" class="btn btn-isok">失去焦点以确认</div>
+      <div v-show="todo.isEdit" class="btn btn-isok">
+        失去焦点以确认,长度限制十
+      </div>
     </li></transition
   >
 </template>
@@ -61,8 +63,14 @@ export default {
     },
     inpBlur(e) {
       let newValue = e.target.value.trim();
-      if (newValue !== "") {
+      if (newValue !== "" && newValue.length < 10) {
         this.$bus.$emit("editChange", this.todo.id, e.target.value);
+      } else if (newValue !== "" && newValue.length > 10) {
+        this.$bus.$emit(
+          "editChange",
+          this.todo.id,
+          e.target.value.substring(0, 10)
+        );
       } else {
         this.$bus.$emit("editChange", this.todo.id, "待设定");
       }
