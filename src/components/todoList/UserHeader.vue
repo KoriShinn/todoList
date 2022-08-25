@@ -20,7 +20,14 @@ export default {
   },
   methods: {
     addItem() {
-      const newItem = { id: nanoid(), title: this.newTodo.trim(), done: false };
+      const id = window.sessionStorage.getItem("id");
+      const username = window.sessionStorage.getItem("username");
+      const newItem = {
+        id: id,
+        title: this.newTodo.trim().substring(0, 10),
+        username: username,
+      };
+
       if (this.newTodo.trim() !== "") {
         this.$bus.$emit("aItem", newItem);
       }

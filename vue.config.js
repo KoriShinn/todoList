@@ -4,4 +4,5 @@ module.exports = defineConfig({
   assetsDir: 'static',
   parallel: false,
   publicPath: './',
+  lintOnSave: false
 })
