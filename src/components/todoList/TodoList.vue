@@ -30,64 +30,29 @@ export default {
     return {
       todos: [],
       userinfo: {},
+      doneTotal: "",
     };
   },
   methods: {
-    // 增
-    addItem(newItem) {
-      this.todos.unshift(newItem);
-    },
-    // 删
-
-    // removeItem(todoId) {
-    //   this.todos = this.todos.filter((todo) => {
-    //     return todo.id !== todoId;
-    //   });
+    // async doneTotalMe() {
+    //   const { data: res } = await this.$http.get("todo/doneList");
+    //   const aa = JSON.stringify(res.data[0]);
+    //   const r1 = aa.replace(/[^0-9]/gi, "");
+    //   this.doneTotal = r1;
     // },
-    // 改 done
-    async doneChange(todoId) {
-      // this.todos.forEach((todo) => {
-      //   if (todo.id === todoId) {
-      //     todo.done = !todo.done;
-      //   }
-      // });
-      const { data: res } = await this.$http.put(`todo/list/${todoId}`);
-      console.log(res);
-    },
-    // 改 编辑title数据
-    editChange(todoId, value) {
-      this.todos.forEach(async (todo) => {
-        if (todo.id === todoId) {
-          todo.isEdit = !todo.isEdit;
-          if (value) {
-            // todo.title = value;
-            const { data: res } = await this.$http.put(`todo/${todoId}`, {
-              title: value,
-            });
-            if (res.meta.status !== 0) return this.$message.error("修改失败");
-            this.getTodoList();
-          }
-        }
-      });
-    },
     // 全选状态改变
-    allDoneInpChnage(isTrue) {
-      if (!isTrue) {
-        this.todos.forEach((todo) => {
-          todo.done = false;
-        });
+    async allDoneInpChnage(isTrue) {
+      if (isTrue) {
+        const { data: res } = await this.$http.put(`todo/allDone/${1}`);
+        console.log(res.meta.msg);
+        this.getTodoList();
       } else {
-        this.todos.forEach((todo) => {
-          todo.done = true;
-        });
+        const { data: res } = await this.$http.put(`todo/cancelDone/${0}`);
+        console.log(res.meta.msg);
+        this.getTodoList();
       }
     },
-    // 清除所有选中
-    clearSelectDone() {
-      this.todos = this.todos.filter((todo) => {
-        return todo.done !== true;
-      });
-    },
+
     // ----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
     // 获取列表
@@ -97,28 +62,56 @@ export default {
       this.todos = res.data;
       console.log(res.data);
     },
+
+    // 新增
+    async addItem(userinfo) {
+      // this.todos.unshift(newItem);
+      const { data: res } = await this.$http.post("todo", userinfo);
+      if (res.meta.status !== 0) return this.$message.error("添加失败");
+      this.getTodoList();
+    },
     // 删除功能
     async removeItem(todoId) {
       const { data: res } = await this.$http.delete(`todo/${todoId}`);
       if (res.meta.status !== 0) return this.$message.error("删除失败");
-      this.$message.success("删除成功");
       this.getTodoList();
     },
-    // 删除多个
 
-    // getUserinfo(info) {
-    //   const { nickname, token, ...userinfo } = info;
-    //   this.userinfo = userinfo;
-    //   this.getTodoList();
-    // },
+    // 清除所有选中
+    async clearSelectDone() {
+      const { data: res } = await this.$http.delete(`todo/select/${1}`);
+      if (res.meta.status !== 0) return this.$message.error("删除失败");
+      this.getTodoList();
+    },
+
+    // 改 done
+    async doneChange(todoId) {
+      const { data: res } = await this.$http.put(`todo/list/${todoId}`);
+      this.getTodoList();
+    },
+
+    // 改 编辑title数据
+    editChange(todoId, value) {
+      this.todos.forEach(async (todo) => {
+        if (todo.id === todoId) {
+          todo.isEdit = !todo.isEdit;
+          if (value) {
+            const { data: res } = await this.$http.put(`todo/${todoId}`, {
+              title: value,
+            });
+            if (res.meta.status !== 0) return this.$message.error("修改失败");
+            this.getTodoList();
+          }
+        }
+      });
+    },
   },
+  computed: {},
   created() {
     this.getTodoList();
+    // this.doneTotalMe();
   },
   mounted() {
-    // 弃用
-    this.$bus.$on("getTodoList", this.getUserinfo);
-
     // -------
     this.$bus.$on("dChange", this.doneChange);
     this.$bus.$on("rItem", this.removeItem);

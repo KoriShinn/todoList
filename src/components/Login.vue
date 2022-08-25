@@ -90,15 +90,14 @@ export default {
           message: "登录成功",
           duration: 1100,
         });
-        this.$bus.$emit("getTodoList", res.data);
         window.sessionStorage.setItem("token", res.data.token);
+        window.sessionStorage.setItem("id", res.data.id);
+        window.sessionStorage.setItem("username", res.data.username);
         this.$router.push("/todo");
       });
     },
   },
-  beforeDestroy() {
-    this.$bus.$off("getTodoList");
-  },
+  beforeDestroy() {},
 };
 </script>
 
